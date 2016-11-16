@@ -3,9 +3,9 @@ from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.common.keys import Keys
 import unittest
 import time
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase ):
 
 	def setUp(self):
 		self.browser = webdriver.Firefox(firefox_binary=FirefoxBinary(
@@ -15,6 +15,7 @@ class NewVisitorTest(LiveServerTestCase):
 
 
 	def tearDown(self):
+		self.browser.refresh()
 		self.browser.quit()
 
 
@@ -53,6 +54,7 @@ class NewVisitorTest(LiveServerTestCase):
 		self.check_for_row_in_list_table('1: Buy peacock feathers')
 		self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
 
+		self.browser.refresh()
 		self.browser.quit()
 		self.browser = webdriver.Firefox(firefox_binary=FirefoxBinary(
 			firefox_path = "C:\Program Files\Mozilla Firefox\\firefox.exe"
@@ -85,6 +87,6 @@ class NewVisitorTest(LiveServerTestCase):
 		inputbox = self.browser.find_element_by_id('id_new_item')
 		self.assertAlmostEqual(
 			inputbox.location['x'] + inputbox.size['width'] / 2,
-			512,
+			505,
 			delta=5
 		)
