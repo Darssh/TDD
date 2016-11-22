@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ValidationError
 
 from lists.models import Item, List
 
@@ -17,7 +18,14 @@ def view_list(request,list_id):
 @csrf_exempt
 def new_list(request):
 	list_ = List.objects.create()
-	Item.objects.create(text=request.POST['item_text'], list=list_)
+	item = Item.objects.create(text=request.POST['item_text'], list=list_)
+	try:
+		item.full_clean()
+		item.save()
+	except ValidationError:
+		list_.delete()
+		error = "You can't have an empty list item"
+		return render(request, 'home.html', {"error": error})
 	return redirect('/lists/%d/' % (list_.id,))
 
 @csrf_exempt
